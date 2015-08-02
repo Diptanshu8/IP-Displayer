@@ -4,21 +4,6 @@ import sys,RPi.GPIO as GPIO
 import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(22,GPIO.OUT)
-GPIO.setup(17,GPIO.OUT)
-GPIO.setup(18,GPIO.OUT)
-GPIO.setup(27,GPIO.OUT)
-
-GPIO.setup(5,GPIO.OUT)
-GPIO.setup(6,GPIO.OUT)
-GPIO.setup(13,GPIO.OUT)
-GPIO.setup(19,GPIO.OUT)
-
-GPIO.setup(16,GPIO.OUT)
-GPIO.setup(26,GPIO.OUT)
-GPIO.setup(21,GPIO.OUT)
-GPIO.setup(20,GPIO.OUT)
-
 def bit_balancer(bit):
 	if len(bit)<4:
 		for i in xrange(4-len(bit)):
@@ -26,7 +11,6 @@ def bit_balancer(bit):
 	return bit
 
 def binary(n):
-	t= n
 	bit = []
 	while n>0:
 		bit.append(n%2)
@@ -45,69 +29,28 @@ def digit_splitter(n):
 		for i in xrange(3-len(t)):
 			t.insert(0,0)
 	return t	
-def first(t):
-	if t[0]==1:
-		GPIO.output(5,GPIO.HIGH)
-	else:
-		GPIO.output(5,GPIO.LOW)
-	if t[1]==1:
-                GPIO.output(6,GPIO.HIGH)
-        else:
-                GPIO.output(6,GPIO.LOW)
-	if t[2]==1:
-                GPIO.output(13,GPIO.HIGH)
-        else:
-                GPIO.output(13,GPIO.LOW)
-	if t[3]==1:
-                GPIO.output(19,GPIO.HIGH)
-        else:
-                GPIO.output(19,GPIO.LOW)
-
-def second(t):
-        if t[0]==1:
-                GPIO.output(17,GPIO.HIGH)
-        else:
-                GPIO.output(17,GPIO.LOW)
-        if t[1]==1:
-                GPIO.output(18,GPIO.HIGH)
-        else:
-                GPIO.output(18,GPIO.LOW)
-        if t[2]==1:
-                GPIO.output(27,GPIO.HIGH)
-        else:
-                GPIO.output(27,GPIO.LOW)
-        if t[3]==1:
-                GPIO.output(22,GPIO.HIGH)
-        else:
-                GPIO.output(22,GPIO.LOW)
-
-def third(t):
-        if t[0]==1:
-                GPIO.output(26,GPIO.HIGH)
-        else:
-                GPIO.output(26,GPIO.LOW)
-        if t[1]==1:
-                GPIO.output(16,GPIO.HIGH)
-        else:
-                GPIO.output(16,GPIO.LOW)
-        if t[2]==1:
-                GPIO.output(20,GPIO.HIGH)
-        else:
-                GPIO.output(20,GPIO.LOW)
-        if t[3]==1:
-                GPIO.output(21,GPIO.HIGH)
-        else:
-                GPIO.output(21,GPIO.LOW)
-
+def display(t,pins):
+	p_count =0
+	for pin in pins :
+		GPIO.setup(pin,GPIO.OUT)
+	for i in t:
+		print pins[p_count]
+		if i==1:
+			GPIO.output(pins[p_count],GPIO.HIGH)
+		else:
+			GPIO.output(pins[p_count],GPIO.LOW)
+		p_count+=1
 s = str(sys.argv[1])
 x = s.split('.')
+pins = [[5,6,13,19],[17,18,27,22],[26,16,20,21]]
 for i in x:
-	t = digit_splitter(int(i))
-	temp=binary(int(t[0]))
-	first(temp)
-	temp=binary(int(t[1]))
-	second(temp)
-	temp = binary(int(t[2]))
-	third(temp)
-	time.sleep(3)
+	count=0
+	print "i ="+ str(i)
+	digits = digit_splitter(int(i))
+	print len(digits)
+	for digit in digits:
+		temp=binary(digit)
+		display(temp,pins[count])
+		count+=1
+	time.sleep(2)
 GPIO.cleanup()
