@@ -50,7 +50,6 @@ for ip in argument:
 	s = str(ip)
 	x = s.split('.')
 	pins = [5,6,13,19]
-	print x
 	for i in x:
 		count=0
 		digits = digit_splitter(int(i))
