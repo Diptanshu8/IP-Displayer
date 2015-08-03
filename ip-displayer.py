@@ -29,28 +29,25 @@ def digit_splitter(n):
 		for i in xrange(3-len(t)):
 			t.insert(0,0)
 	return t	
-def display(t,pins):
-	p_count =0
+def display(t,pins,count):
 	for pin in pins :
 		GPIO.setup(pin,GPIO.OUT)
-	for i in t:
-		print pins[p_count]
-		if i==1:
-			GPIO.output(pins[p_count],GPIO.HIGH)
+	for p in pins:
+		if t[0]==1:
+			GPIO.output(p[count],GPIO.HIGH)
 		else:
-			GPIO.output(pins[p_count],GPIO.LOW)
-		p_count+=1
+			GPIO.output(p[count],GPIO.LOW)
+		t=t[1:]
 s = str(sys.argv[1])
 x = s.split('.')
-pins = [[5,6,13,19],[17,18,27,22],[26,16,20,21]]
+pins = zip([5,6,13,19],[17,18,27,22],[26,16,20,21])
+
 for i in x:
 	count=0
-	print "i ="+ str(i)
 	digits = digit_splitter(int(i))
-	print len(digits)
 	for digit in digits:
 		temp=binary(digit)
-		display(temp,pins[count])
+		display(temp,pins,count)
 		count+=1
 	time.sleep(2)
 GPIO.cleanup()
