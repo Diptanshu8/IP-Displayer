@@ -41,18 +41,25 @@ def display_dot():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(26,GPIO.OUT)
 	GPIO.output(26,GPIO.LOW)
-s = str(sys.argv[1])
-x = s.split('.')
-pins = [5,6,13,19]
-for i in x:
-	count=0
-	digits = digit_splitter(int(i))
-	for digit in digits:
-		temp=binary(digit)
-		display_number(temp,pins)
-		count+=1
-	GPIO.cleanup()
-	display_dot()	
-	time.sleep(2)
-	GPIO.output(26,GPIO.HIGH)
-GPIO.cleanup()
+def display_letter(flag):
+	pass;		
+argument = []
+argument.append(sys.argv[1])
+argument.append(sys.argv[-1])
+for ip in argument:
+	s = str(ip)
+	x = s.split('.')
+	pins = [5,6,13,19]
+	print x
+	for i in x:
+		count=0
+		digits = digit_splitter(int(i))
+		for digit in digits:
+			temp=binary(digit)
+			display_number(temp,pins)
+			count+=1
+		GPIO.cleanup()
+		display_dot()	
+		time.sleep(2)
+		GPIO.output(26,GPIO.HIGH)
+
