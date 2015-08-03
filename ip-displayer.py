@@ -4,12 +4,13 @@ import sys,RPi.GPIO as GPIO
 import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+GPIO.setup(26,GPIO.OUT)
+GPIO.output(26,GPIO.HIGH)
 def bit_balancer(bit):
 	if len(bit)<4:
 		for i in xrange(4-len(bit)):
 			bit.insert(0,0)
 	return bit
-
 def binary(n):
 	bit = []
 	while n>0:
@@ -25,29 +26,33 @@ def digit_splitter(n):
 		t.append(k)
 		n=n/10
 	t.reverse()
-	if len(t)<3:
-		for i in xrange(3-len(t)):
-			t.insert(0,0)
 	return t	
-def display(t,pins,count):
+def display_number(t,pins):
 	for pin in pins :
 		GPIO.setup(pin,GPIO.OUT)
 	for p in pins:
 		if t[0]==1:
-			GPIO.output(p[count],GPIO.HIGH)
+			GPIO.output(p,GPIO.HIGH)
 		else:
-			GPIO.output(p[count],GPIO.LOW)
+			GPIO.output(p,GPIO.LOW)		
 		t=t[1:]
+	time.sleep(1)
+def display_dot():
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(26,GPIO.OUT)
+	GPIO.output(26,GPIO.LOW)
 s = str(sys.argv[1])
 x = s.split('.')
-pins = zip([5,6,13,19],[17,18,27,22],[26,16,20,21])
-
+pins = [5,6,13,19]
 for i in x:
 	count=0
 	digits = digit_splitter(int(i))
 	for digit in digits:
 		temp=binary(digit)
-		display(temp,pins,count)
+		display_number(temp,pins)
 		count+=1
+	GPIO.cleanup()
+	display_dot()	
 	time.sleep(2)
+	GPIO.output(26,GPIO.HIGH)
 GPIO.cleanup()
